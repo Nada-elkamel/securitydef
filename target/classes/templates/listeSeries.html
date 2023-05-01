@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
+<link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<head>
+    <meta charset="utf-8">
+    <title>Liste des Series</title>
+</head>
+<body>
+<div layout:fragment="Mycontent">
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                Liste des Series
+            </div>
+            <div class="card-body">
+
+                <table class="table table-striped">
+                    <tr>
+                        <th>ID</th><th>Nom Serie</th><th>Langue</th><th>Date Diffusion</th><th>Genre</th><th>Actions</th>
+                    </tr>
+                    <tr th:each="s:${series.content}">
+                        <td th:text="${s.idSerie}"></td>
+                        <td th:text="${s.nomSerie}"></td>
+                        <td th:text="${s.langue}"></td>
+                        <td th:text="${#dates.format(s.dateDiffusion, 'dd/MM/yyyy')}"></td>
+                        
+                        <td   th:if= "${!#strings.isEmpty(s.genre)}"   th:text="${s.genre.nomGenre}"></td>  
+             			 <td   th:if= "${#strings.isEmpty(s.genre)}"     th:text="${'Pas de Genre'}"></td> 
+                        
+                        <td sec:authorize="hasRole('ADMIN')"><a class="btn btn-danger" onclick="return confirm('Etes-vous sûr ?')" th:href="@{supprimerSerie(id=${s.idSerie},
+                            page=${currentPage}, size=${size})}">Supprimer</a></td>
+                        <td sec:authorize="hasRole('ADMIN')"><a class="btn btn-success" th:href="@{modifierSerie(id=${s.idSerie})}">Editer</a></td>
+                    </tr>
+                </table>
+                <ul class="nav nav-pills">
+                    <li th:each="page,status:${pages}">
+                        <a th:class="${status.index==currentPage?'btn btn-primary':'btn' }"
+                           th:href="@{ ListeSeries(page=${status.index}, size=${size} ) }"
+                           th:text="${status.index }"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
